@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Panel — Tushar Travels</title>
+
+  <style>
+    :root {
+      --brand: #0f9cf5;
+      --brand-soft: #e0f2ff;
+      --bg: #f3f4f6;
+      --card: #ffffff;
+      --ink: #0f172a;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background: radial-gradient(circle at top left, #dbeafe 0, #f9fafb 42%, #eef2ff 100%);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    /* ---------- Navbar (copied from other pages) ---------- */
+    .top-nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 50;
+      background: linear-gradient(90deg, rgba(15, 23, 42, .92), rgba(30, 64, 175, .92));
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 30px rgba(15, 23, 42, .45);
+    }
+
+    .top-nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .top-nav button {
+      border-radius: 999px;
+    }
+
+    /* ---------- Page layout ---------- */
+    .container {
+      max-width: 1100px;
+      margin: 100px auto 40px;
+      padding: 0 16px;
+      min-height: calc(100vh - 300px);
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .brand-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-logo {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #f97316, #ef4444);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 18px;
+      font-weight: 700;
+      box-shadow: 0 10px 25px rgba(248, 113, 113, 0.35);
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      background: var(--brand);
+      color: #fff;
+      border: 0;
+      padding: 8px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.2);
+      transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.15s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.24);
+      background: #0284c7;
+    }
+
+    .btn.secondary {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid #e5e7eb;
+      box-shadow: none;
+    }
+
+    .btn.secondary:hover {
+      background: #f3f4f6;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn.danger {
+      background: #ef4444;
+      box-shadow: 0 8px 18px rgba(239, 68, 68, 0.25);
+    }
+
+    .btn.danger:hover {
+      background: #dc2626;
+    }
+
+    /* ---------- Layout: sidebar + main ---------- */
+    .layout {
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+    }
+
+    .sidebar {
+      width: 230px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 16px;
+      padding: 14px 12px;
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.06);
+      backdrop-filter: blur(10px);
+    }
+
+    .sidebar-title {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .nav-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .nav-item {
+      width: 100%;
+      text-align: left;
+      border-radius: 999px;
+      padding: 8px 12px;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      color: var(--muted);
+      transition: background 0.12s ease, transform 0.08s ease, box-shadow 0.08s ease, color 0.12s ease;
+    }
+
+    .nav-item span.icon {
+      font-size: 1.05rem;
+    }
+
+    .nav-item.active {
+      background: var(--brand-soft);
+      color: #0369a1;
+      font-weight: 600;
+      box-shadow: 0 10px 20px rgba(37, 99, 235, 0.12);
+      transform: translateY(-1px);
+    }
+
+    .nav-item:hover:not(.active) {
+      background: #f3f4f6;
+    }
+
+    .main-column {
+      flex: 1;
+      min-width: 0;
+    }
+
+    @media (max-width: 799px) {
+      .layout {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+      }
+
+      .nav-list {
+        flex-direction: row;
+        overflow-x: auto;
+      }
+
+      .nav-item {
+        flex: 1 0 auto;
+        justify-content: center;
+      }
+    }
+
+    /* ---------- Cards ---------- */
+    .card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 18px 16px;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.06);
+      margin-bottom: 18px;
+      border: 1px solid rgba(148, 163, 184, 0.18);
+    }
+
+    h2 {
+      font-size: 1.25rem;
+      margin-bottom: 6px;
+    }
+
+    h3 {
+      font-size: 1.1rem;
+      margin-bottom: 4px;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .section-line {
+      height: 1px;
+      background: linear-gradient(to right, rgba(148, 163, 184, 0.35), transparent);
+      margin: 8px 0 12px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #f3f4f6;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-right: 8px;
+      margin-top: 4px;
+    }
+
+    .pill span {
+      font-weight: 500;
+      color: var(--ink);
+    }
+
+    /* ---------- Overview stats ---------- */
+    .stats-grid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      margin-top: 10px;
+    }
+
+    .stat-card {
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: #f9fafb;
+      border: 1px solid var(--border);
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 2px;
+    }
+
+    .stat-value {
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+
+    /* ---------- Lists / tables ---------- */
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    .table th,
+    .table td {
+      padding: 8px 6px;
+      text-align: left;
+      border-bottom: 1px solid #e5e7eb;
+      vertical-align: top;
+    }
+
+    .table th {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+    }
+
+    .table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .badge-role {
+      display: inline-flex;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      background: #eef2ff;
+      color: #4338ca;
+      text-transform: uppercase;
+    }
+
+    .tag {
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: .78rem;
+      background: #e5e7eb;
+      color: #374151;
+      text-transform: capitalize;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .tag-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: currentColor;
+    }
+
+    .tag.pending {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .tag.confirmed {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .tag.cancelled {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .tag.new {
+      background: #e0f2fe;
+      color: #075985;
+    }
+
+    .tag.reviewed {
+      background: #f5f3ff;
+      color: #4338ca;
+    }
+
+    .tag.resolved {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .empty {
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #f1f5f9;
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .empty span {
+      font-size: 1.1rem;
+      margin-right: 6px;
+    }
+
+    select {
+      padding: 4px 6px;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      font-size: 0.8rem;
+      background: #fff;
+    }
+
+    .small {
+      font-size: 0.8rem;
+    }
+
+    .nowrap {
+      white-space: nowrap;
+    }
+
+    /* ---------- Footer (copied from other pages) ---------- */
+    footer {
+      background: #0b1220;
+      color: #cbd5e1;
+      margin-top: 40px;
+    }
+
+    .footer-wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 28px 16px;
+      display: grid;
+      gap: 18px;
+      grid-template-columns: 1.2fr 1fr 1fr;
+    }
+
+    footer h4 {
+      color: #fff;
+      margin-bottom: 10px;
+    }
+
+    footer a {
+      color: #cbd5e1;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      color: #fff;
+    }
+
+    .foot-bottom {
+      border-top: 1px solid rgba(255, 255, 255, .08);
+      padding: 12px 16px;
+      text-align: center;
+      opacity: .8;
+    }
+
+    @media (max-width: 820px) {
+      .footer-wrap {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ===== Navbar ===== -->
+  <nav class="top-nav">
+    <div class="top-nav-inner">
+      <div style="
+        display:flex;
+        align-items:center;
+        gap:10px;
+        font-size:1.4rem;
+        font-weight:bold;
+        color:#a3e635;
+        cursor: pointer;
+      " onclick="location.href='index.html'">
+        <img src="logo.png" alt="Tushar Travels Logo" style="
+          height:40px;
+          width:auto;
+          object-fit:contain;
+          vertical-align:middle;
+        ">
+        TUSHAR TRAVELS
+      </div>
+
+      <div style="display:flex; gap:15px; align-items:center;">
+        <span style="font-size:1rem; font-weight:500; color:white;">📞 +91 9876543210</span>
+
+        <button id="authBtn" style="
+          background:#0072ff;
+          color:white;
+          border:none;
+          padding:8px 16px;
+          border-radius:999px;
+          cursor:pointer;
+          transition:0.3s;
+          font-weight:600;
+        " onmouseover="this.style.background='#0056c2'"
+          onmouseout="this.style.background='#0072ff'"></button>
+
+        <button onclick="location.href='booking.html'" style="
+          background:#0072ff;
+          color:white;
+          border:none;
+          padding:8px 16px;
+          border-radius:999px;
+          cursor:pointer;
+          transition:0.3s;
+          font-weight:600;
+        " onmouseover="this.style.background='#0056c2'"
+          onmouseout="this.style.background='#0072ff'">
+          Booking
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== Content ===== -->
+  <div class="container">
+    <div class="top-bar">
+      <div class="brand-title">
+        <div class="brand-logo">A</div>
+        <div>
+          <h1>Admin Panel</h1>
+          <p class="subtitle">Manage users, bookings, and feedback for Tushar Travels.</p>
+        </div>
+      </div>
+      <div class="btn-group">
+        <button class="btn secondary" onclick="location.href='index.html'">
+          ⬅️ <span>Back to site</span>
+        </button>
+        <button class="btn danger" onclick="handleLogout()">
+          🚪 <span>Logout</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="layout">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-title">Admin menu</div>
+        <nav class="nav-list">
+          <button class="nav-item active" data-section="overview" onclick="setActiveSection('overview')">
+            <span class="icon">📊</span>
+            <span>Overview</span>
+          </button>
+          <button class="nav-item" data-section="users" onclick="setActiveSection('users')">
+            <span class="icon">👥</span>
+            <span>Users</span>
+          </button>
+          <button class="nav-item" data-section="bookings" onclick="setActiveSection('bookings')">
+            <span class="icon">🧳</span>
+            <span>Bookings</span>
+          </button>
+          <button class="nav-item" data-section="feedback" onclick="setActiveSection('feedback')">
+            <span class="icon">💬</span>
+            <span>Feedback</span>
+          </button>
+        </nav>
+      </aside>
+
+      <!-- Main -->
+      <div class="main-column">
+        <!-- OVERVIEW -->
+        <div class="card" id="overviewCard">
+          <div class="section-header">
+            <div>
+              <h2>Overview</h2>
+              <p class="muted">Quick snapshot of your platform activity.</p>
+            </div>
+          </div>
+          <div class="section-line"></div>
+
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-label">Total users</div>
+              <div class="stat-value" id="statUsers">0</div>
+              <div class="small muted">Registered in the system</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Bookings (pending)</div>
+              <div class="stat-value" id="statBookingsPending">0</div>
+              <div class="small muted">Awaiting confirmation</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Bookings (confirmed)</div>
+              <div class="stat-value" id="statBookingsConfirmed">0</div>
+              <div class="small muted">Ready to travel</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Feedback (new)</div>
+              <div class="stat-value" id="statFeedbackNew">0</div>
+              <div class="small muted">Need attention</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- USERS -->
+        <div class="card" id="usersCard" style="display:none;">
+          <div class="section-header">
+            <div>
+              <h2>Users</h2>
+              <p class="muted">All registered users in the system.</p>
+            </div>
+          </div>
+          <div class="section-line"></div>
+          <div id="usersEmpty" class="empty" style="display:none;">
+            <span>👥</span>No users found.
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="table" id="usersTable"></table>
+          </div>
+        </div>
+
+        <!-- BOOKINGS -->
+        <div class="card" id="bookingsCard" style="display:none;">
+          <div class="section-header">
+            <div>
+              <h2>Bookings</h2>
+              <p class="muted">Manage all booking requests.</p>
+            </div>
+            <span class="muted small nowrap">Update status directly from here</span>
+          </div>
+          <div class="section-line"></div>
+          <div id="bookingsEmpty" class="empty" style="display:none;">
+            <span>🧳</span>No bookings found.
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="table" id="bookingsTable"></table>
+          </div>
+        </div>
+
+        <!-- FEEDBACK -->
+        <div class="card" id="feedbackCard" style="display:none;">
+          <div class="section-header">
+            <div>
+              <h2>Feedback</h2>
+              <p class="muted">Read and track customer feedback.</p>
+            </div>
+          </div>
+          <div class="section-line"></div>
+          <div id="feedbackEmpty" class="empty" style="display:none;">
+            <span>💬</span>No feedback entries yet.
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="table" id="feedbackTable"></table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Footer ===== -->
+  <footer>
+    <div class="footer-wrap">
+      <div>
+        <h4>About Tushar Travels</h4>
+        <p>We curate unforgettable group trips and crafted holidays across India & abroad. 1000+ happy travelers.</p>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <p>📞 +91 9876543210<br />✉️ hello@wanderlusttravels.com</p>
+      </div>
+      <div>
+        <h4>Quick Links</h4>
+        <p><a href="feedback.html">Feedback</a> · <a href="feedback.html">About</a> · <a href="#">Terms</a></p>
+      </div>
+    </div>
+    <div class="foot-bottom">© <span id="year"></span> Tushar Travels — All rights reserved.</div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    const API_BASE = '';
+    const USER_STORAGE_KEY = 'wander_user';
+    const authBtn = document.getElementById('authBtn');
+
+    let currentUser = null;
+    let authToken = null;
+
+    // ---------- Auth / access control ----------
+    (function initAdminAuth() {
+      const raw = localStorage.getItem(USER_STORAGE_KEY);
+      if (!raw) {
+        alert('You must be logged in as admin to access this page.');
+        window.location.href = 'login.html';
+        return;
+      }
+      try {
+        const parsed = JSON.parse(raw);
+        if (!parsed || !parsed.id || !parsed.token || parsed.role !== 'admin') {
+          localStorage.removeItem(USER_STORAGE_KEY);
+          alert('Admin access required.');
+          window.location.href = 'login.html';
+          return;
+        }
+        currentUser = parsed;
+        authToken = parsed.token;
+      } catch (err) {
+        console.error('Failed to parse stored user:', err);
+        localStorage.removeItem(USER_STORAGE_KEY);
+        alert('Please log in again.');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      // Navbar button
+      authBtn.textContent = 'Admin Panel';
+      authBtn.onclick = () => window.location.href = 'admin.html';
+    })();
+
+    function handleLogout() {
+      localStorage.removeItem(USER_STORAGE_KEY);
+      sessionStorage.removeItem(USER_STORAGE_KEY);
+      window.location.href = 'login.html';
+    }
+
+    // ---------- Tabs ----------
+    function setActiveSection(section) {
+      const overviewCard = document.getElementById('overviewCard');
+      const usersCard = document.getElementById('usersCard');
+      const bookingsCard = document.getElementById('bookingsCard');
+      const feedbackCard = document.getElementById('feedbackCard');
+
+      overviewCard.style.display = section === 'overview' ? '' : 'none';
+      usersCard.style.display = section === 'users' ? '' : 'none';
+      bookingsCard.style.display = section === 'bookings' ? '' : 'none';
+      feedbackCard.style.display = section === 'feedback' ? '' : 'none';
+
+      document.querySelectorAll('.nav-item').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-section') === section);
+      });
+    }
+
+    // ---------- Data fetching ----------
+    let usersData = [];
+    let bookingsData = [];
+    let feedbackData = [];
+
+    async function fetchAdminData() {
+      if (!authToken) return;
+
+      try {
+        const [usersRes, bookingsRes, feedbackRes] = await Promise.all([
+          fetch(`${API_BASE}/api/admin/users`, {
+            headers: { 'Authorization': `Bearer ${authToken}` }
+          }),
+          fetch(`${API_BASE}/api/admin/bookings`, {
+            headers: { 'Authorization': `Bearer ${authToken}` }
+          }),
+          fetch(`${API_BASE}/api/admin/feedback`, {
+            headers: { 'Authorization': `Bearer ${authToken}` }
+          }),
+        ]);
+
+        if (usersRes.status === 401 || bookingsRes.status === 401 || feedbackRes.status === 401 ||
+          usersRes.status === 403 || bookingsRes.status === 403 || feedbackRes.status === 403) {
+          localStorage.removeItem(USER_STORAGE_KEY);
+          alert('Your session has expired or is invalid. Please log in again.');
+          window.location.href = 'login.html';
+          return;
+        }
+
+        usersData = await usersRes.json();
+        bookingsData = await bookingsRes.json();
+        feedbackData = await feedbackRes.json();
+
+        renderOverview();
+        renderUsers();
+        renderBookings();
+        renderFeedback();
+      } catch (err) {
+        console.error('Failed to load admin data:', err);
+      }
+    }
+
+    // ---------- Overview render ----------
+    function renderOverview() {
+      const usersCount = usersData.length || 0;
+      const bookingsPending = bookingsData.filter(b => (b.status || '').toLowerCase() === 'pending').length;
+      const bookingsConfirmed = bookingsData.filter(b => (b.status || '').toLowerCase() === 'confirmed').length;
+      const feedbackNew = feedbackData.filter(f => (f.status || '').toLowerCase() === 'new').length;
+
+      document.getElementById('statUsers').textContent = usersCount;
+      document.getElementById('statBookingsPending').textContent = bookingsPending;
+      document.getElementById('statBookingsConfirmed').textContent = bookingsConfirmed;
+      document.getElementById('statFeedbackNew').textContent = feedbackNew;
+    }
+
+    // ---------- Users render ----------
+    function renderUsers() {
+      const table = document.getElementById('usersTable');
+      const empty = document.getElementById('usersEmpty');
+
+      if (!usersData.length) {
+        empty.style.display = 'block';
+        table.innerHTML = '';
+        return;
+      }
+      empty.style.display = 'none';
+
+      table.innerHTML = `
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name & Email</th>
+            <th>Phone</th>
+            <th>Role</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${usersData.map(u => {
+            const isAdmin = (u.email || '').toLowerCase() === 'admin@email.com';
+            return `
+              <tr>
+                <td>${u.id}</td>
+                <td>
+                  <div>${u.name || '—'}</div>
+                  <div class="small muted">${u.email || '—'}</div>
+                </td>
+                <td>${u.phone || '—'}</td>
+                <td>
+                  <span class="badge-role">${isAdmin ? 'ADMIN' : 'USER'}</span>
+                </td>
+              </tr>
+            `;
+          }).join('')}
+        </tbody>
+      `;
+    }
+
+    // ---------- Bookings render ----------
+    function renderBookings() {
+      const table = document.getElementById('bookingsTable');
+      const empty = document.getElementById('bookingsEmpty');
+
+      if (!bookingsData.length) {
+        empty.style.display = 'block';
+        table.innerHTML = '';
+        return;
+      }
+      empty.style.display = 'none';
+
+      table.innerHTML = `
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>User</th>
+            <th>Destination / Dates</th>
+            <th>Travelers</th>
+            <th>Status</th>
+            <th>Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${bookingsData.map(b => {
+            const dt = new Date(b.created_at);
+            const statusLower = (b.status || 'pending').toLowerCase();
+            return `
+              <tr>
+                <td>${b.id}</td>
+                <td>#${b.user_id}</td>
+                <td>
+                  <div>${b.destination}</div>
+                  <div class="small muted">Dates: ${b.start_date || '—'} → ${b.end_date || '—'}</div>
+                </td>
+                <td>${b.travelers || '—'}</td>
+                <td>
+                  <span class="tag ${statusLower}">
+                    <span class="tag-dot"></span>${b.status || 'pending'}
+                  </span>
+                  <div class="small" style="margin-top:4px;">
+                    <label>
+                      <span class="muted small">Update:</span>
+                      <select onchange="handleBookingStatusChange(${b.id}, this.value)">
+                        <option value="">Change status…</option>
+                        <option value="pending">Pending</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="cancelled">Cancelled</option>
+                      </select>
+                    </label>
+                  </div>
+                </td>
+                <td class="small nowrap">
+                  ${dt.toLocaleDateString()}<br>
+                  ${dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </td>
+              </tr>
+            `;
+          }).join('')}
+        </tbody>
+      `;
+    }
+
+    async function handleBookingStatusChange(id, status) {
+      if (!status) return;
+      try {
+        const res = await fetch(`${API_BASE}/api/admin/bookings/${id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify({ status })
+        });
+
+        if (res.status === 401 || res.status === 403) {
+          localStorage.removeItem(USER_STORAGE_KEY);
+          alert('Your session has expired or is invalid. Please log in again.');
+          window.location.href = 'login.html';
+          return;
+        }
+
+        if (!res.ok) {
+          alert('Failed to update booking status.');
+          return;
+        }
+
+        // Update in local data
+        const item = bookingsData.find(b => b.id === id);
+        if (item) item.status = status;
+        renderBookings();
+        renderOverview();
+      } catch (err) {
+        console.error('Update booking status error:', err);
+        alert('Network error while updating booking status.');
+      }
+    }
+
+    // ---------- Feedback render ----------
+    function renderFeedback() {
+      const table = document.getElementById('feedbackTable');
+      const empty = document.getElementById('feedbackEmpty');
+
+      if (!feedbackData.length) {
+        empty.style.display = 'block';
+        table.innerHTML = '';
+        return;
+      }
+      empty.style.display = 'none';
+
+      table.innerHTML = `
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>User / Contact</th>
+            <th>Type / Rating</th>
+            <th>Message</th>
+            <th>Status</th>
+            <th>Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${feedbackData.map(f => {
+            const dt = new Date(f.created_at);
+            const ratingText = f.rating ? `${f.rating}★` : '—';
+            const statusLower = (f.status || 'new').toLowerCase();
+            return `
+              <tr>
+                <td>${f.id}</td>
+                <td>
+                  <div class="small muted">User: ${f.user_id || '—'}</div>
+                  <div class="small">${f.name || ''}</div>
+                  <div class="small muted">${f.contact || ''}</div>
+                </td>
+                <td>
+                  <div>${f.type || 'general'}</div>
+                  <div class="small muted">Rating: ${ratingText}</div>
+                  <div class="small muted">Share: ${f.share ? 'Yes' : 'No'}</div>
+                </td>
+                <td class="small">${f.message || '(No message)'}</td>
+                <td>
+                  <span class="tag ${statusLower}">
+                    <span class="tag-dot"></span>${f.status || 'new'}
+                  </span>
+                  <div class="small" style="margin-top:4px;">
+                    <label>
+                      <span class="muted small">Update:</span>
+                      <select onchange="handleFeedbackStatusChange(${f.id}, this.value)">
+                        <option value="">Change status…</option>
+                        <option value="new">New</option>
+                        <option value="reviewed">Reviewed</option>
+                        <option value="resolved">Resolved</option>
+                      </select>
+                    </label>
+                  </div>
+                </td>
+                <td class="small nowrap">
+                  ${dt.toLocaleDateString()}<br>
+                  ${dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </td>
+              </tr>
+            `;
+          }).join('')}
+        </tbody>
+      `;
+    }
+
+    async function handleFeedbackStatusChange(id, status) {
+      if (!status) return;
+      try {
+        const res = await fetch(`${API_BASE}/api/admin/feedback/${id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify({ status })
+        });
+
+        if (res.status === 401 || res.status === 403) {
+          localStorage.removeItem(USER_STORAGE_KEY);
+          alert('Your session has expired or is invalid. Please log in again.');
+          window.location.href = 'login.html';
+          return;
+        }
+
+        if (!res.ok) {
+          alert('Failed to update feedback status.');
+          return;
+        }
+
+        // Update local data
+        const item = feedbackData.find(f => f.id === id);
+        if (item) item.status = status;
+        renderFeedback();
+        renderOverview();
+      } catch (err) {
+        console.error('Update feedback status error:', err);
+        alert('Network error while updating feedback status.');
+      }
+    }
+
+    // Initial load
+    setActiveSection('overview');
+    fetchAdminData();
+  </script>
+</body>
+
+</html>

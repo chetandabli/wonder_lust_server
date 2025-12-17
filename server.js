@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const { sendEmail } = require('./mailer');
 const templates = require('./emailTemplates');
+const path = require('path');
 
 const app = express();
 const PORT = 5000;
@@ -66,6 +67,9 @@ app.use(cors(
   { origin: '*' }
 ));
 app.use(express.json()); // parse JSON body
+
+// Serve static frontend files
+app.use(express.static(path.join(__dirname, 'frontend')));
 
 /**
  * Auth middleware
@@ -482,6 +486,12 @@ app.patch('/api/admin/feedback/:id', auth('admin'), (req, res) => {
     console.error('Admin update feedback error:', err);
     res.status(500).json({ message: 'Server error' });
   }
+});
+
+// ---------- SPA FALLBACK ----------
+// Serve index.html for any unknown route (for SPA support)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
 });
 
 // ---------- START SERVER ----------

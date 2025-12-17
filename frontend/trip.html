@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trip Details - Tushar Travels</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --brand: #0072ff;
+      --ink: #0f172a;
+      --card: #ffffff;
+      --muted: #64748b;
+      --shadow: 0 8px 24px rgba(0, 0, 0, .12);
+    }
+
+    body {
+      font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background-color: #f5f7fa;
+      color: #1e293b;
+      line-height: 1.6;
+    }
+
+    /* ---------- Navbar (from index) ---------- */
+    .top-nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 10;
+      background: linear-gradient(90deg, rgba(15, 23, 42, .92), rgba(30, 64, 175, .92));
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 30px rgba(15, 23, 42, .45);
+    }
+
+    .top-nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* ---------- Hero Section (dynamic) ---------- */
+    .hero {
+      position: relative;
+      height: 70vh;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      text-align: left;
+      padding-left: 7%;
+      margin-top: 60px;
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      color: white;
+      max-width: 700px;
+      text-shadow: 0 8px 22px rgba(0, 0, 0, 0.55);
+    }
+
+    .hero-content .small {
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+
+    .hero-content h1 {
+      font-size: 3.2rem;
+      font-weight: 900;
+      margin: 10px 0;
+      line-height: 1.1;
+    }
+
+    .hero-content h1 span {
+      color: #a3e635;
+    }
+
+    .hero-content p {
+      font-size: 1.15rem;
+      margin-bottom: 20px;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      background: #0072ff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 999px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn:hover {
+      background: #0056c2;
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid white;
+    }
+
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.16);
+    }
+
+    .badge-slug {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      background: #eff6ff;
+      color: #1d4ed8;
+      backdrop-filter: blur(6px);
+    }
+
+    /* ---------- Content ---------- */
+    .container {
+      max-width: 1000px;
+      margin: 60px auto;
+      padding: 0 20px;
+    }
+
+    .section {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+      padding: 28px;
+      margin-bottom: 28px;
+    }
+
+    .section h2 {
+      color: #0072ff;
+      margin-bottom: 15px;
+      font-size: 1.6rem;
+    }
+
+    .section p {
+      color: #0f172a;
+    }
+
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    ul li {
+      margin-bottom: 8px;
+      padding-left: 14px;
+      position: relative;
+    }
+
+    ul li::before {
+      content: "✔";
+      color: #0072ff;
+      position: absolute;
+      left: -4px;
+      top: 0;
+    }
+
+    .price {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #0072ff;
+      margin-top: 10px;
+    }
+
+    .not-found {
+      text-align: center;
+      padding: 48px 24px;
+    }
+
+    .not-found h1 {
+      margin-bottom: 12px;
+    }
+
+    .not-found a {
+      color: #0072ff;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .not-found a:hover {
+      text-decoration: underline;
+    }
+
+    /* ---------- Similar trips ---------- */
+    .similar-grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      margin-top: 8px;
+    }
+
+    .similar-card {
+      background: var(--card);
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.2s ease, translate 0.15s ease;
+    }
+
+    .similar-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.2);
+    }
+
+    .similar-card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .similar-body {
+      padding: 12px 14px 16px;
+    }
+
+    .similar-body h3 {
+      font-size: 1rem;
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+
+    .similar-body p {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .similar-price {
+      display: inline-block;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--brand);
+      margin-top: 4px;
+    }
+
+    /* ---------- Footer (from index) ---------- */
+    footer {
+      background: #0b1220;
+      color: #cbd5e1;
+      margin-top: 60px;
+    }
+
+    .footer-wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 28px 16px;
+      display: grid;
+      gap: 18px;
+      grid-template-columns: 1.2fr 1fr 1fr;
+    }
+
+    footer h4 {
+      color: #fff;
+      margin-bottom: 10px;
+    }
+
+    footer a {
+      color: #cbd5e1;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      color: #fff;
+    }
+
+    .foot-bottom {
+      border-top: 1px solid rgba(255, 255, 255, .08);
+      padding: 12px 16px;
+      text-align: center;
+      opacity: .8;
+    }
+
+    @media (max-width: 820px) {
+      .footer-wrap {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        padding: 0 1.5rem;
+      }
+
+      .hero-content h1 {
+        font-size: 2.4rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ===== Navbar (same as index) ===== -->
+  <nav class="top-nav">
+    <div class="top-nav-inner">
+      <div style="
+        display:flex;
+        align-items:center;
+        gap:10px;
+        font-size:1.4rem;
+        font-weight:bold;
+        color:#a3e635;
+        cursor: pointer;
+      " onclick="location.href='index.html'">
+        <img src="logo.png" alt="Tushar Travels Logo" style="
+          height:40px;
+          width:auto;
+          object-fit:contain;
+          vertical-align:middle;
+        ">
+        TUSHAR TRAVELS
+      </div>
+
+      <div style="display:flex; gap:15px; align-items:center;">
+        <span style="font-size:1rem; font-weight:500; color:white;">📞 +91 9876543210</span>
+
+        <button id="authBtn" style="
+          background:#0072ff;
+          color:white;
+          border:none;
+          padding:8px 16px;
+          border-radius:999px;
+          cursor:pointer;
+          transition:0.3s;
+          font-weight:600;
+        " onmouseover="this.style.background='#0056c2'"
+          onmouseout="this.style.background='#0072ff'"></button>
+
+        <button onclick="location.href='booking.html'" style="
+          background:#0072ff;
+          color:white;
+          border:none;
+          padding:8px 16px;
+          border-radius:999px;
+          cursor:pointer;
+          transition:0.3s;
+          font-weight:600;
+        " onmouseover="this.style.background='#0056c2'"
+          onmouseout="this.style.background='#0072ff'">
+          Booking
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== Hero (populated dynamically) ===== -->
+  <section class="hero" id="hero">
+    <div class="hero-content">
+      <p class="small" id="heroKicker">PLAN YOUR</p>
+      <h1 id="heroTitle">VACATION TO <span id="heroHighlight">GOA</span></h1>
+      <p id="heroTagline">Handpicked group trips & custom getaways</p>
+      <div class="btn-group">
+        <button class="btn" onclick="document.getElementById('overview').scrollIntoView({behavior:'smooth'})">
+          Explore Itinerary
+        </button>
+        <button class="btn btn-outline" onclick="window.location.href='booking.html'">
+          Book Now
+        </button>
+      </div>
+      <div class="badge-slug" id="slugBadge"></div>
+    </div>
+  </section>
+
+  <!-- ===== Main content (will be filled by JS) ===== -->
+  <div class="container" id="content">
+    <!-- JS injects sections here -->
+  </div>
+
+  <!-- ===== Footer (same as index) ===== -->
+  <footer>
+    <div class="footer-wrap">
+      <div>
+        <h4>About Tushar Travels</h4>
+        <p>We curate unforgettable group trips and crafted holidays across India & abroad. 1000+ happy travelers.</p>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <p>📞 +91 9876543210<br />✉️ hello@wanderlusttravels.com</p>
+      </div>
+      <div>
+        <h4>Quick Links</h4>
+        <p><a href="feedback.html">Feedback</a> · <a href="feedback.html">About</a> · <a href="#">Terms</a></p>
+      </div>
+    </div>
+    <div class="foot-bottom">© <span id="year"></span> Tushar Travels — All rights reserved.</div>
+  </footer>
+
+  <!-- ===== Footer year ===== -->
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+
+  <!-- ===== Shared trip data ===== -->
+  <script src="destinations.js"></script>
+
+  <!-- ===== Dynamic trip rendering ===== -->
+  <script>
+    // ---------- Auth button logic (role-aware, token-aware) ----------
+    const USER_STORAGE_KEY = 'wander_user';
+    const authBtn = document.getElementById('authBtn');
+
+    function getStoredUser() {
+      const raw = localStorage.getItem(USER_STORAGE_KEY);
+      if (!raw) return null;
+      try {
+        const parsed = JSON.parse(raw);
+        // Must at least have an id; token/role used elsewhere but not required to just show a button
+        if (!parsed.id) return null;
+        return parsed;
+      } catch (err) {
+        console.warn('Failed to parse stored user:', err);
+        return null;
+      }
+    }
+
+    (function initAuthButton() {
+      const user = getStoredUser();
+
+      if (!user) {
+        authBtn.textContent = 'Login';
+        authBtn.onclick = () => window.location.href = 'login.html';
+        return;
+      }
+
+      if (user.role === 'admin') {
+        authBtn.textContent = 'Admin Panel';
+        authBtn.onclick = () => window.location.href = 'admin.html';
+      } else {
+        authBtn.textContent = 'Profile';
+        authBtn.onclick = () => window.location.href = 'profile.html';
+      }
+    })();
+
+    // ---- Dynamic content ----
+    const params = new URLSearchParams(window.location.search);
+    const slug = params.get('slug');
+
+    const details = window.TRIP_DETAILS && slug ? window.TRIP_DETAILS[slug] : null;
+    const contentEl = document.getElementById('content');
+    const heroEl = document.getElementById('hero');
+
+    if (!details) {
+      contentEl.innerHTML = `
+        <div class="section not-found">
+          <h1>Trip not found</h1>
+          <p>The trip you're looking for doesn't exist or the link is incorrect.</p>
+          <p><a href="index.html">← Back to all trips</a></p>
+        </div>
+      `;
+    } else {
+      // Hero
+      heroEl.style.backgroundImage = "url('" + details.heroImage + "')";
+      document.getElementById('heroHighlight').textContent = details.heroHighlight;
+      document.getElementById('heroTitle').innerHTML =
+        'VACATION TO <span>' + details.heroHighlight + '</span>';
+      document.getElementById('heroTagline').textContent = details.heroTagline;
+      document.getElementById('slugBadge').textContent = '#' + details.slug.toUpperCase();
+
+      const formatINR = (amount) =>
+        '₹' + new Intl.NumberFormat('en-IN').format(amount) + '/- per person';
+
+      const formatINRPlain = (amount) =>
+        '₹' + new Intl.NumberFormat('en-IN').format(amount);
+
+      // Similar trips (from DESTINATIONS, excluding current slug)
+      const allDestinations = (window.DESTINATIONS || []);
+      const similar = allDestinations.filter(d => d.slug !== slug).slice(0, 3);
+
+      const similarHtml = similar.length ? `
+        <div class="section">
+          <h2>Similar trips you may like</h2>
+          <div class="similar-grid">
+            ${similar.map(d => `
+              <article class="similar-card" onclick="location.href='trip.html?slug=${d.slug}'">
+                <img src="${d.image}" alt="${d.name}">
+                <div class="similar-body">
+                  <h3>${d.name}</h3>
+                  <p>${d.short}</p>
+                  <span class="similar-price">From ${formatINRPlain(d.price)}</span>
+                </div>
+              </article>
+            `).join('')}
+          </div>
+        </div>
+      ` : '';
+
+      // Main sections + similar trips
+      contentEl.innerHTML = `
+        <div class="section" id="overview">
+          <h2>Overview</h2>
+          <p>${details.overview}</p>
+        </div>
+
+        <div class="section">
+          <h2>Itinerary</h2>
+          <ul>
+            ${details.itinerary.map(item => `<li>${item}</li>`).join('')}
+          </ul>
+        </div>
+
+        <div class="section">
+          <h2>Inclusions</h2>
+          <ul>
+            ${details.inclusions.map(item => `<li>${item}</li>`).join('')}
+          </ul>
+        </div>
+
+        <div class="section">
+          <h2>Price</h2>
+          <p class="price">Starting at ${formatINR(details.price)}</p>
+        </div>
+
+        ${similarHtml}
+      `;
+    }
+  </script>
+
+</body>
+</html>
