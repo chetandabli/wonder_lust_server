@@ -9,11 +9,11 @@ const templates = require('./emailTemplates');
 const path = require('path');
 
 const app = express();
-const PORT = 5000;
 const DB_PATH = './wanderlust.db';
 const SALT_ROUNDS = 10;
 
 const JWT_SECRET = process.env.JWT_SECRET;
+const PORT = process.env.PORT || 3000;
 
 // ---------- DB SETUP ----------
 const db = new Database(DB_PATH);
@@ -494,8 +494,7 @@ app.use((req, res, next) => {
   // Only handle non-API, non-static requests
   if (
     req.method === 'GET' &&
-    !req.path.startsWith('/api') &&
-    !req.path.includes('.')
+    !req.path.startsWith('/api')
   ) {
     res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
   } else {
