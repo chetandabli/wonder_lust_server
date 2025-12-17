@@ -490,8 +490,17 @@ app.patch('/api/admin/feedback/:id', auth('admin'), (req, res) => {
 
 // ---------- SPA FALLBACK ----------
 // Serve index.html for any unknown route (for SPA support)
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
+app.use((req, res, next) => {
+  // Only handle non-API, non-static requests
+  if (
+    req.method === 'GET' &&
+    !req.path.startsWith('/api') &&
+    !req.path.includes('.')
+  ) {
+    res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
+  } else {
+    next();
+  }
 });
 
 // ---------- START SERVER ----------
