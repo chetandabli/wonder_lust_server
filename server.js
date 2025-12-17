@@ -495,4 +495,6 @@ app.get('*', (req, res) => {
 });
 
 // ---------- START SERVER ----------
-module.exports = app;
+app.listen(PORT, () => {
+  console.log(`API running on http://localhost:${PORT}`);
+});
