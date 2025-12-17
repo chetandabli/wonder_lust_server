@@ -61,12 +61,11 @@ db.prepare(`
 
 // ---------- MIDDLEWARE ----------
 // Allow all origins
-app.use(cors({
-  origin: '*',
-  credentials: false,
-  optionsSuccessStatus: 200,
-}));
-app.use(express.json());
+// allow from https://tiny-mandazi-d484ce.netlify.app/
+app.use(cors(
+  { origin: '*' }
+));
+app.use(express.json()); // parse JSON body
 
 /**
  * Auth middleware
