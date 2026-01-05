@@ -197,22 +197,12 @@ app.post('/api/signup', (req, res) => {
     sendEmail({
       to: user.email,
       ...templates.signupWelcome({ name: user.name }),
-    })
-      .then(() => {
-        res.status(201).json({ ...user, role, token });
-      })
-      .catch((emailErr) => {
-        console.error('Signup email error:', emailErr);
-        res.status(201).json({ 
-          ...user, 
-          role, 
-          token, 
-          emailError: emailErr && emailErr.message ? emailErr.message : String(emailErr)
-        });
-      });
+    }).catch(console.error);
+
+    res.status(201).json({ ...user, role, token });
   } catch (err) {
     console.error('Signup error:', err);
-    res.status(500).json({ message: 'Server error', error: err.message});
+    res.status(500).json({ message: 'Server error' });
   }
 });
 
