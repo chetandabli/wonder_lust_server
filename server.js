@@ -14,6 +14,7 @@ const SALT_ROUNDS = 10;
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const PORT = process.env.PORT || 3000;
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 
 // ---------- DB SETUP ----------
 const db = new Database(DB_PATH);
@@ -126,7 +127,7 @@ app.post('/api/login', (req, res) => {
     }
 
     // admin email
-    const role = user.email === 'manuaaaaaas@gmail.com' ? 'admin' : 'user';
+    const role = user.email === ADMIN_EMAIL ? 'admin' : 'user';
 
     // Create JWT token  --------------------------------- *** NEW
     const token = jwt.sign(
